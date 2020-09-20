@@ -3,6 +3,7 @@ import json
 import os
 from Experiments import singleshot
 from Experiments import multishot
+from Experiments import persistence
 from Experiments.theory import unit_conservation
 from Experiments.theory import layer_conservation
 from Experiments.theory import imp_conservation
@@ -101,6 +102,13 @@ if __name__ == '__main__':
                         help='random seed (default: 1)')
     parser.add_argument('--verbose', action='store_true',
                         help='print statistics during training and testing')
+
+    parser.add_argument('--save-pruned', action='store_true',
+                        help='Save intermediate pruned models')
+    parser.add_argument('--save-train', action='store_true',
+                        help="Save intermediate trained models")
+    parser.add_argument('--save-pruned-path', type=str, default="Results/pruned",
+                        help='path directory to save intermediate pruned models (default: "Results/data")')
     args = parser.parse_args()
 
 
@@ -139,4 +147,6 @@ if __name__ == '__main__':
         imp_conservation.run(args)
     if args.experiment == 'schedule-conservation':
         schedule_conservation.run(args)
+    if args.experiment == 'persistence':
+        persistence.run(args)
 

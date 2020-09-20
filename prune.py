@@ -3,7 +3,8 @@ import torch
 import numpy as np
 
 def prune_loop(model, loss, pruner, dataloader, device, sparsity, 
-               schedule, scope, epochs, reinitialize=False, train_mode=False):
+               schedule, scope, epochs, reinitialize=False, train_mode=False,
+               save_pruned_models=False, save_path=""):
     r"""Applies score mask loop iteratively to a final sparsity level.
     """
     # Set model to train or eval mode
@@ -13,6 +14,8 @@ def prune_loop(model, loss, pruner, dataloader, device, sparsity,
 
     # Prune model
     for epoch in tqdm(range(epochs)):
+        if save_pruned_models:
+            torch.save(model.state_dict(), save_path+ "/%s_pruned.pth" % (str(epoch)))
         pruner.score(model, loss, dataloader, device)
         if schedule == 'exponential':
             sparse = sparsity**((epoch + 1) / epochs)

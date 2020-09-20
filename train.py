@@ -42,10 +42,13 @@ def eval(model, loss, dataloader, device, verbose):
             average_loss, correct1, len(dataloader.dataset), accuracy1))
     return average_loss, accuracy1, accuracy5
 
-def train_eval_loop(model, loss, optimizer, scheduler, train_loader, test_loader, device, epochs, verbose):
+def train_eval_loop(model, loss, optimizer, scheduler, train_loader, test_loader, device, epochs, verbose,
+                    save_trained=False, save_path=""):
     test_loss, accuracy1, accuracy5 = eval(model, loss, test_loader, device, verbose)
     rows = [[np.nan, test_loss, accuracy1, accuracy5]]
     for epoch in tqdm(range(epochs)):
+        if (save_trained):
+            torch.save(model.state_dict(), save_path+"%s_train.pth" % str(epoch))
         train_loss = train(model, loss, optimizer, train_loader, device, epoch, verbose)
         test_loss, accuracy1, accuracy5 = eval(model, loss, test_loader, device, verbose)
         row = [train_loss, test_loss, accuracy1, accuracy5]
