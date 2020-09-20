@@ -17,7 +17,7 @@ if __name__ == '__main__':
     training_args.add_argument('--dataset', type=str, default='mnist',
                         choices=['mnist','cifar10','cifar100','tiny-imagenet','imagenet'],
                         help='dataset (default: mnist)')
-    training_args.add_argument('--model', type=str, default='fc', choices=['fc','conv',
+    training_args.add_argument('--model', type=str, default='fc', choices=['fc', 'fc-10', 'fc-1000', 'conv',
                         'vgg11','vgg11-bn','vgg13','vgg13-bn','vgg16','vgg16-bn','vgg19','vgg19-bn',
                         'resnet18','resnet20','resnet32','resnet34','resnet44','resnet50',
                         'resnet56','resnet101','resnet110','resnet110','resnet152','resnet1202',
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     ## Experiment Hyperparameters ##
     parser.add_argument('--experiment', type=str, default='singleshot', 
                         choices=['persistence', 'singleshot','multishot','unit-conservation',
-                        'layer-conservation','imp-conservation','schedule-conservation'],
+                        'layer-conservation','imp-conservation','schedule-conservation', 'pers-search'],
                         help='experiment name (default: example)')
     parser.add_argument('--expid', type=str, default='',
                         help='name used to save results (default: "")')
@@ -149,4 +149,17 @@ if __name__ == '__main__':
         schedule_conservation.run(args)
     if args.experiment == 'persistence':
         persistence.run(args)
+    if args.experiment == 'pers-search':
+        for dataset in ['mnist', 'cifar10', 'cifar100']:
+            for model in ['fc-10', 'fc', 'fc-10']:
+                for pruner in ['rand','mag','snip','grasp','synflow']:
+                    for seed in [1]:
+                        print(f"Dataset: {dataset}, model: {model}, pruner: {pruner}, seed: {seed}")
+
+                        args.dataset = dataset
+                        args.model = model
+                        args.pruner = pruner
+                        args.seed = seed
+
+                        persistence.run(args)
 

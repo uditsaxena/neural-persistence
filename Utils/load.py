@@ -93,6 +93,8 @@ def dataloader(dataset, batch_size, train, workers, length=None):
 def model(model_architecture, model_class):
     default_models = {
         'fc' : mlp.fc,
+        'fc-10' : mlp.fc_10,
+        'fc-1000' : mlp.fc_1000,
         'conv' : mlp.conv,
     }
     lottery_models = {
