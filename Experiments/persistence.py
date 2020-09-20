@@ -64,8 +64,8 @@ def run(args):
                                   save_pruned_path)
 
     ## Display Results ##
-    frames = [pre_result.head(1), pre_result.tail(1), post_result.head(1), post_result.tail(1)]
-    train_result = pd.concat(frames, keys=['Init.', 'Pre-Prune', 'Post-Prune', 'Final'])
+    frames = [post_result.head(1), post_result.tail(1)]
+    train_result = pd.concat(frames, keys=['Post-Prune', 'Final'])
     prune_result = metrics.summary(model, 
                                    pruner.scores,
                                    metrics.flop(model, input_shape, device),
