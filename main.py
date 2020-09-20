@@ -85,7 +85,7 @@ if __name__ == '__main__':
                         help='list of number of prune-train cycles (levels) for multishot (default: [])')
     ## Experiment Hyperparameters ##
     parser.add_argument('--experiment', type=str, default='singleshot', 
-                        choices=['singleshot','multishot','unit-conservation',
+                        choices=['persistence', 'singleshot','multishot','unit-conservation',
                         'layer-conservation','imp-conservation','schedule-conservation'],
                         help='experiment name (default: example)')
     parser.add_argument('--expid', type=str, default='',
