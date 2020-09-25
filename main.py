@@ -14,8 +14,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Network Compression')
     # Training Hyperparameters
     training_args = parser.add_argument_group('training')
-    training_args.add_argument('--dataset', type=str, default='mnist',
-                        choices=['mnist','cifar10','cifar100','tiny-imagenet','imagenet'],
+    training_args.add_argument('--dataset', type=str, default='mnist', choices=['mnist','cifar10','cifar100','tiny-imagenet','imagenet'],
                         help='dataset (default: mnist)')
     training_args.add_argument('--model', type=str, default='fc', choices=['fc', 'fc-10', 'fc-1000', 'conv',
                         'vgg11','vgg11-bn','vgg13','vgg13-bn','vgg16','vgg16-bn','vgg19','vgg19-bn',
@@ -40,7 +39,7 @@ if __name__ == '__main__':
                         help='number of epochs to train before pruning (default: 0)')
     training_args.add_argument('--post-epochs', type=int, default=10,
                         help='number of epochs to train after pruning (default: 10)')
-    training_args.add_argument('--lr', type=float, default=0.001,
+    training_args.add_argument('--lr', type=float, default=0.01,
                         help='learning rate (default: 0.001)')
     training_args.add_argument('--lr-drops', type=int, nargs='*', default=[],
                         help='list of learning rate drops (default: [])')
@@ -107,7 +106,7 @@ if __name__ == '__main__':
                         help='Save intermediate pruned models')
     parser.add_argument('--save-train', action='store_true',
                         help="Save intermediate trained models")
-    parser.add_argument('--save-pruned-path', type=str, default="Results/pruned",
+    parser.add_argument('--save-pruned-path', type=str, default="extra-space/persistence/pruned",
                         help='path directory to save intermediate pruned models (default: "Results/data")')
     args = parser.parse_args()
 
@@ -150,16 +149,19 @@ if __name__ == '__main__':
     if args.experiment == 'persistence':
         persistence.run(args)
     if args.experiment == 'pers-search':
-        for dataset in ['mnist', 'cifar10', 'cifar100']:
-            for model in ['fc-10', 'fc', 'fc-10']:
-                for pruner in ['rand','mag','snip','grasp','synflow']:
-                    for seed in [1]:
-                        print(f"Dataset: {dataset}, model: {model}, pruner: {pruner}, seed: {seed}")
+        for dataset in ['cifar10','mnist']:
+            for model in ['fc-1000']: #['fc-10', 'fc', 'fc-1000']:
+                for pruner in ['synflow', 'rand','mag','snip','grasp']:
+                    for comp in [1.0,1.5,2.0]:
+                        for seed in [1]:
+                            print(f"Dataset: {dataset}, model: {model}, pruner: {pruner}, comp: {comp}, seed: {seed}")
+                            if comp == 2.0:
+                                args.lr = 0.0005
+                            args.dataset = dataset
+                            args.model = model
+                            args.pruner = pruner
+                            args.compression = comp
+                            args.seed = seed
 
-                        args.dataset = dataset
-                        args.model = model
-                        args.pruner = pruner
-                        args.seed = seed
-
-                        persistence.run(args)
+                            persistence.run(args)
 

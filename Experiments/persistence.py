@@ -10,6 +10,7 @@ from train import *
 from prune import *
 
 def run(args):
+    print(f"Args : {args}")
     ## Random Seed and Device ##
     torch.manual_seed(args.seed)
     device = load.device(args.gpu)
@@ -44,7 +45,7 @@ def run(args):
                                                                   args.prune_residual))
     sparsity = 10**(-float(args.compression))
 
-    save_pruned_path = args.save_pruned_path + "/%s/%s/%s/%s/%s" % (args.model_class, args.model,
+    save_pruned_path = args.save_pruned_path + "/%s/%s/%s/%s/%s/%s" % (args.model_class, args.model, args.dataset, 
                                                                     args.pruner, str(args.compression),
                                                                     str(args.seed))
     if (args.save_pruned):
@@ -63,6 +64,7 @@ def run(args):
                                   test_loader, device, args.post_epochs, args.verbose, args.save_train,
                                   save_pruned_path)
 
+    post_result.to_csv(save_pruned_path + "/%s" % (args.dataset + "_" + str(args.seed) + "_" + str(args.compression) + ".csv"))
     ## Display Results ##
     frames = [post_result.head(1), post_result.tail(1)]
     train_result = pd.concat(frames, keys=['Post-Prune', 'Final'])
